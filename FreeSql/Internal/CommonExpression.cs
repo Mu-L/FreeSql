@@ -212,12 +212,15 @@ namespace FreeSql.Internal
                                 CsType = map[idx].Column.CsType,
                                 MapType = map[idx].Column.Attribute.MapType
                             };
-                            field.Append(", ").Append(_common.RereadColumn(map[idx].Column, child.DbField));
+                            var rereadColumn = _common.RereadColumn(map[idx].Column, child.DbField);
+                            field.Append(", ").Append(rereadColumn);
                             if (index >= 0)
                             {
                                 child.DbNestedField = $"as{++index}";
                                 field.Append(_common.FieldAsAlias(child.DbNestedField));
                             }
+                            else if (index == ReadAnonymousFieldAsCsName && rereadColumn != child.DbField)
+                                field.Append(_common.FieldAsAlias(child.DbNestedField));
                             parent.Childs.Add(child);
                         }
                         if (_tables?.Count > 1)
